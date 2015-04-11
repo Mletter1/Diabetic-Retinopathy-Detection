@@ -25,7 +25,7 @@ def get_doc():
 
     DESCRIPTION
 
-        This is the main entry point for the logistical regression algorithm
+        This is used to process image files into a 1d array
 
     EXAMPLES
         print out help message:
