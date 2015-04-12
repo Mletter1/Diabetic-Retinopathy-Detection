@@ -108,7 +108,7 @@ def flatten_image(img):
     return img_wide[0]
 
 
-def process_images():
+def process_images_labels():
     """
     recurses through all images and reduces image to a 1d array
     :returns
@@ -160,7 +160,7 @@ if __name__ == '__main__':
                 IMG_DIR = args[0]
 
         # setup a standard image size; this will distort some images but will get everything into the same shape
-        process_images()
+        process_images_labels()
 
         print "finish time: " + time.asctime(), '\nTOTAL TIME IN MINUTES:', (time.time() - start_time) / 60.0
         # smooth exit if no exceptions are thrown
