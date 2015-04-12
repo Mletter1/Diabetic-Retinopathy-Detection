@@ -10,10 +10,9 @@ import time
 import cPickle as pickle
 import scipy
 import numpy
+import csv
 import glob
 from PIL import Image
-
-
 
 
 DEBUG = False
@@ -112,21 +111,29 @@ def flatten_image(img):
 def process_images():
     """
     recurses through all images and reduces image to a 1d array
+    :returns
+        labels: map of {name: class}
+        processed_images: map of {name: numpy image array}
     """
-    labels = []
 
-    processed_images = []
+    processed_images = dict()
     print "\n*************************************\nprocessing images in", SAMPLE_DIR, "\n"
     count = 0
-    for image in glob.glob(SAMPLE_DIR+"/*.jpeg"):
+    with open(IMG_DIR + '/trainLabels.csv', mode='r') as infile:
+        reader = csv.reader(infile)
+        labels = dict((rows[0], rows[1]) for rows in reader)
+
+    for image in glob.glob(SAMPLE_DIR + "/*.jpeg"):
         print "processing img:", image, " ", count
         count += 1
         p_img = img_to_matrix(image)
         p_img = flatten_image(p_img)
-        processed_images.append(p_img)
-    processed_images = numpy.array(processed_images)
+        image = image.split('/')
+        name = image[len(image)-1].strip('.jpeg')
+        processed_images[name] = numpy.array(p_img)
 
     print "\n*************************************\n"
+    return processed_images, labels
 
 
 if __name__ == '__main__':
