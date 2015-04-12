@@ -10,11 +10,16 @@ import time
 import cPickle as pickle
 import scipy
 import numpy
+import glob
 from PIL import Image
+
+
+
 
 DEBUG = False
 IMG_DIR = './data'
-STANDARD_SIZE = (256, 256)
+SAMPLE_DIR = './sample/sample'
+STANDARD_SIZE = 256, 256
 
 
 def get_doc():
@@ -100,15 +105,18 @@ def process_images():
     """
     recurses through all images and reduces image to a 1d array
     """
-    images = [IMG_DIR + f for f in os.listdir(IMG_DIR)]
     labels = []
 
-    data = []
-    for image in images:
-        img = img_to_matrix(image)
-        img = flatten_image(img)
-        data.append(img)
-    data = numpy.array(data)
+    processed_images = []
+    print "processing images in", SAMPLE_DIR
+    count = 0
+    for image in glob.glob(SAMPLE_DIR+"/*.jpeg"):
+        print "processing img:", image, " ", count
+        count += 1
+        p_img = img_to_matrix(image)
+        p_img = flatten_image(p_img)
+        processed_images.append(p_img)
+    processed_images = numpy.array(processed_images)
 
 
 if __name__ == '__main__':
