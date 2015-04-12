@@ -77,12 +77,16 @@ def get_doc():
     return doc
 
 
-def img_to_matrix(filename, verbose=False):
+def img_to_matrix(filename):
     """
     takes a filename and turns it into a numpy array of RGB pixels
+    :parameter
+        filename: path to image file
+    :returns
+        img: re-sized image
     """
     img = Image.open(filename)
-    if verbose == True:
+    if DEBUG:
         print "changing size from %s to %s" % (str(img.size), str(STANDARD_SIZE))
     img = img.resize(STANDARD_SIZE)
     img = list(img.getdata())
@@ -95,6 +99,10 @@ def flatten_image(img):
     """
     takes in an (m, n) numpy array and flattens it
     into an array of shape (1, m * n)
+    :parameter
+        img: image to flatten
+    :returns
+        img_wide: vector representation of the image
     """
     s = img.shape[0] * img.shape[1]
     img_wide = img.reshape(1, s)
@@ -108,7 +116,7 @@ def process_images():
     labels = []
 
     processed_images = []
-    print "processing images in", SAMPLE_DIR
+    print "\n*************************************\nprocessing images in", SAMPLE_DIR, "\n"
     count = 0
     for image in glob.glob(SAMPLE_DIR+"/*.jpeg"):
         print "processing img:", image, " ", count
@@ -117,6 +125,8 @@ def process_images():
         p_img = flatten_image(p_img)
         processed_images.append(p_img)
     processed_images = numpy.array(processed_images)
+
+    print "\n*************************************\n"
 
 
 if __name__ == '__main__':
@@ -141,7 +151,7 @@ if __name__ == '__main__':
         if options.process:
             if args:  # truthy check
                 IMG_DIR = args[0]
-                
+
         # setup a standard image size; this will distort some images but will get everything into the same shape
         process_images()
 
