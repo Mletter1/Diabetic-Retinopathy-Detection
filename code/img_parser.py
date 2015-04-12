@@ -160,7 +160,9 @@ if __name__ == '__main__':
                 IMG_DIR = args[0]
 
         # setup a standard image size; this will distort some images but will get everything into the same shape
-        process_images_labels()
+        processed_images, labels = process_images_labels()
+        pickle_data = [processed_images, labels]
+        pickle.dump(pickle_data, open("data.p", "wb"))
 
         print "finish time: " + time.asctime(), '\nTOTAL TIME IN MINUTES:', (time.time() - start_time) / 60.0
         # smooth exit if no exceptions are thrown
