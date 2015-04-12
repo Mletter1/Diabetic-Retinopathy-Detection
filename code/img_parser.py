@@ -135,17 +135,17 @@ if __name__ == '__main__':
         # determine what to do with the options supplied by the user
         if options.verbose:
             DEBUG = True
-        print "options ", options
-        print "args", args
-        print "start time: " + time.asctime()
+
+        print "options ", options, "\nargs", args, "\nstart time: " + time.asctime()
+
         if options.process:
             if args:  # truthy check
                 IMG_DIR = args[0]
+                
         # setup a standard image size; this will distort some images but will get everything into the same shape
         process_images()
-        print "finish time: " + time.asctime()
-        print 'TOTAL TIME IN MINUTES:',
-        print (time.time() - start_time) / 60.0
+
+        print "finish time: " + time.asctime(), '\nTOTAL TIME IN MINUTES:', (time.time() - start_time) / 60.0
         # smooth exit if no exceptions are thrown
         sys.exit(0)
 
