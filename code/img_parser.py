@@ -18,7 +18,7 @@ from PIL import Image
 DEBUG = False
 IMG_DIR = './data'
 SAMPLE_DIR = './sample/sample'
-STANDARD_SIZE = 256, 256
+STANDARD_SIZE = 256, 170  # 1.5 to 1 aspect ratio
 
 
 def get_doc():
