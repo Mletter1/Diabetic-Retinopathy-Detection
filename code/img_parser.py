@@ -29,7 +29,7 @@ def get_doc():
 
     DESCRIPTION
 
-        This is used to process image files into a 1d array
+        This is used to process  image files into a 1d array
 
     EXAMPLES
         print out help message:
