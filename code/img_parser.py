@@ -113,7 +113,7 @@ def process_images_labels():
     recurses through all images and reduces image to a 1d array
     :returns
         labels: map of {name: class}
-        processed_images: map of {name: numpy image array}
+        processed_images: map of {name:  numpy image array}
     """
 
     processed_images = dict()
