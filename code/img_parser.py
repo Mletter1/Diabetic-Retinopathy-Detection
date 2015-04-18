@@ -16,7 +16,7 @@ from PIL import Image
 
 
 DEBUG = False
-IMG_DIR = './data'
+IMG_DIR = './data/train/train'
 SAMPLE_DIR = './sample/sample'
 STANDARD_SIZE = 256, 170  # 1.5 to 1 aspect ratio
 
@@ -117,13 +117,13 @@ def process_images_labels():
     """
 
     processed_images = dict()
-    print "\n*************************************\nprocessing images in", SAMPLE_DIR, "\n"
+    print "\n*************************************\nprocessing images in", IMG_DIR, "\n"
     count = 0
-    with open(IMG_DIR + '/trainLabels.csv', mode='r') as infile:
+    with open('./data' + '/trainLabels.csv', mode='r') as infile:
         reader = csv.reader(infile)
         labels = dict((rows[0], rows[1]) for rows in reader)
 
-    for image in glob.glob(SAMPLE_DIR + "/*.jpeg"):
+    for image in glob.glob(IMG_DIR + "/*.jpeg"):
         print "processing img:", image, " ", count
         count += 1
         p_img = img_to_matrix(image)
