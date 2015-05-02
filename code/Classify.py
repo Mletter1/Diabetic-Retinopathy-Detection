@@ -2,6 +2,9 @@
 
 import numpy
 from scipy.stats import mode
+from sklearn import tree
+from sklearn import svm
+from sklearn import linear_model
 
 def most_common(npArr):
     '''
@@ -43,8 +46,36 @@ def runClassifiers(training, train_labels, testing):
 def buildClassifiers(training, train_labels):
     '''
     Builds an ensemble (list) of classifiers from the given training data.
-    The classifiers are :   < FILL ME IN >
+    The classifiers are :   decision tree, 
     '''
     
-    pass
+    # decision tree, SVM, log. regression, fnn (feed-forward neural net), 
+    # each as separate function returning the classifier 
+    return [ decTree(training, train_labels),
+             supportVectorMachine(training, train_labels),
+             logisticRegressor(training, train_labels)
+           ]
+    
+
+def trainClassifier(clf, training, train_labels):
+    clf.fit(training, train_labels)
+    return clf
+
+
+def decTree(training, train_labels):
+    clf = tree.DecisionTreeClassifier()
+    return trainClassifier(clf, training, train_labels)
+
+
+def supportVectorMachine(training, train_labels):
+    clf = svm.SVC()
+    return trainClassifier(clf, training, train_labels)
+
+
+def logisticRegressor(training, train_labels):
+    clf = linear_model.LogisticRegression()
+    return trainClassifier(clf, training, train_labels)
+
+
+
 
