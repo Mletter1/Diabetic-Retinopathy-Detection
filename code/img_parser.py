@@ -3,22 +3,21 @@
 __author__ = 'Matthew Letter'
 import sys
 import os
-import copy
 import traceback
 import optparse
 import time
 import cPickle as pickle
-import scipy
-import numpy
 import csv
 import glob
+
+import numpy
 from PIL import Image
 
 
 DEBUG = False
-IMG_DIR = './data/train/train'
+IMG_DIR = './data/test/test'
 SAMPLE_DIR = './sample/sample'
-STANDARD_SIZE = 256, 170  # 1.5 to 1 aspect ratio
+STANDARD_SIZE = 3, 2  # 1.5 to 1 aspect ratio
 
 
 def get_doc():
@@ -34,6 +33,9 @@ def get_doc():
     EXAMPLES
         print out help message:
             python img_parser.py.py -h
+
+        process images
+            python img_parser.py.py -p
 
     EXIT STATUS
 
@@ -113,7 +115,7 @@ def process_images_labels():
     recurses through all images and reduces image to a 1d array
     :returns
         labels: map of {name: class}
-        processed_images: map of {name:  numpy image array}
+        processed_train_images: map of {name:  numpy image array}
     """
 
     processed_images = dict()
@@ -124,13 +126,17 @@ def process_images_labels():
         labels = dict((rows[0], rows[1]) for rows in reader)
 
     for image in glob.glob(IMG_DIR + "/*.jpeg"):
-        print "processing img:", image, " ", count
+        #  print "processing img:", image, " ", count
+
+        if count % 1 == 0 or True:
+            print "processing img:", image, " ", count
+            p_img = img_to_matrix(image)
+            p_img = flatten_image(p_img)
+            image = image.split('/')
+            name = image[len(image) - 1].strip('.jpeg')
+            processed_images[name] = numpy.array(p_img)
+
         count += 1
-        p_img = img_to_matrix(image)
-        p_img = flatten_image(p_img)
-        image = image.split('/')
-        name = image[len(image)-1].strip('.jpeg')
-        processed_images[name] = numpy.array(p_img)
 
     print "\n*************************************\n"
     return processed_images, labels
@@ -158,11 +164,10 @@ if __name__ == '__main__':
         if options.process:
             if args:  # truthy check
                 IMG_DIR = args[0]
-
-        # setup a standard image size; this will distort some images but will get everything into the same shape
-        processed_images, labels = process_images_labels()
-        pickle_data = [processed_images, labels]
-        pickle.dump(pickle_data, open("data.p", "wb"))
+            # setup a standard image size; this will distort some images but will get everything into the same shape
+            processed_images, labels = process_images_labels()
+            pickle_data = [processed_images, labels]
+            pickle.dump(pickle_data, open("test.p", "wb"), protocol=2)
 
         print "finish time: " + time.asctime(), '\nTOTAL TIME IN MINUTES:', (time.time() - start_time) / 60.0
         # smooth exit if no exceptions are thrown
