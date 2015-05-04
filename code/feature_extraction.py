@@ -98,7 +98,7 @@ def features_to_db(db, training_dir, test_dir, label_file):
                 Feature.insert_many(data_source).execute()
                 data_source = []
         if len(data_source):
-            Feature.insert_many(data_soruce).execute()
+            Feature.insert_many(data_source).execute()
 
 '''--------------------------------------------------------------------------'''
 ''' Commandline setup'''
