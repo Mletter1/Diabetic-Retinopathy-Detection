@@ -29,7 +29,7 @@ def component_histograms(image, transform=None):
     assert len(shape) == 3
     _, _, num_comp = shape
     return [np.histogram(transform(image[:, :, [idx]]).flatten(),
-                         NUM_HIST_BINS)[0]
+                         bins=NUM_HIST_BINS, range=(0, 256))[0]
             for idx in xrange(0, num_comp)]
 
 def get_labels(label_file):
@@ -49,7 +49,7 @@ def extract(image):
     h, s, v = component_histograms(hsv_image, transform=no_black)
     gray_image = color.rgb2gray(image)
     gray_hist, _ = np.histogram(no_black(gray_image).flatten(),
-                                NUM_HIST_BINS)
+                                NUM_HIST_BINS, range=(0, 1))
     return {'gray_hist': gray_hist, 'red_hist': r, 'green_hist': g,
             'blue_hist':b, 'hue_hist': h, 'saturation_hist': s,
             'value_hist': v}
