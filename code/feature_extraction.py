@@ -76,7 +76,8 @@ def features_to_db(training_dir, test_dir, label_file):
     train_features = extract_from_dir(training_dir)
     logger.debug("Saving training features in db")
     for name, features in train_features:
-        db_entry = Feature(name=name, label=labels[name], **features)
+        db_entry = Feature(name=name + "_train",
+                           label=labels[name], **features)
         db_entry.save()
 
     logger.debug("Extracting test features")
