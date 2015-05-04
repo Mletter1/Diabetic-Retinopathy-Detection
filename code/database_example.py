@@ -1,5 +1,6 @@
 from feature import Feature, mysql_db
 import numpy as np
+import sys
 
 #connect to Nialls's through ssh tunnel
 
@@ -12,7 +13,9 @@ query = Feature.select().where(Feature.label.is_null(False))
 gray_hists = [] # See feature.py for fields in table
 red_hists = []
 labels = []
-for feature in query:
+
+# naive().iterator() is nicer for large numbers of rows (which we have)
+for feature in query.naive().iterator():
     gray_hists.append(feature.gray_hist)
     red_hists.append(feature.red_hist)
     labels.append(feature.label)
@@ -20,6 +23,7 @@ for feature in query:
 gray_train = np.vstack(gray_hists)
 red_train = np.vstack(red_hists)
 gray_and_red_train = np.hstack([gray_train, red_train])
+
 
 #Fit using features
 # model.fit(gray_train, np.array(labels))
@@ -29,14 +33,16 @@ query = Feature.select().where(Feature.label.is_null(True)).order_by(Feature.nam
 gray_hists = [] # See feature.py fields in table
 red_hists = []
 names = []
-for feature in query:
+
+for feature in query.naive().iterator():
     names.append(feature.name)
     gray_hists.append(feature.gray_hist)
     red_hists.append(feature.red_hist)
 
+
 gray_test = np.vstack(gray_hists)
 red_test = np.vstack(red_hists)
-gray_and_red_test = np.hstack([gray_train, red_train])
+gray_and_red_test = np.hstack([gray_test, red_test])
 
 # Predict test labels
 # predicted = model.predict(gray_test)
