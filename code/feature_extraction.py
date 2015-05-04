@@ -29,7 +29,7 @@ def component_histograms(image, transform=None):
     assert len(shape) == 3
     _, _, num_comp = shape
     return [np.histogram(transform(image[:, :, [idx]]).flatten(),
-                         bins=NUM_HIST_BINS, range=(0, 256))[0].astype(np.int32)
+                         bins=NUM_HIST_BINS, range=(0, 256))[0]
             for idx in xrange(0, num_comp)]
 
 def get_labels(label_file):
@@ -50,7 +50,7 @@ def extract(image):
     gray_image = color.rgb2gray(image)
     gray_hist, _ = np.histogram(no_black(gray_image).flatten(),
                                 NUM_HIST_BINS, range=(0, 1))
-    return {'gray_hist': gray_hist.astype(np.int32), 'red_hist': r,
+    return {'gray_hist': gray_hist, 'red_hist': r,
             'green_hist': g, 'blue_hist':b, 'hue_hist': h,
             'saturation_hist': s, 'value_hist': v}
 
@@ -63,11 +63,10 @@ def extract_from_dir(directory):
                 filename = os.path.join(root, name)
                 image = io.imread(filename)
                 no_ext, _ = os.path.splitext(name)
-                logger.debug("extracting {0}".format(no_ext))
                 features = extract(image)
                 yield (no_ext, features)
 
-def features_to_db(training_dir, test_dir, label_file):
+def features_to_db(db, training_dir, test_dir, label_file):
     """Loads the training, test, and label files.  Extracts features and
     saves to db"""
     logger.debug("Getting Labels")
@@ -75,21 +74,35 @@ def features_to_db(training_dir, test_dir, label_file):
     logger.debug("Extracting training features")
     train_features = extract_from_dir(training_dir)
     logger.debug("Saving training features in db")
-    for name, features in train_features:
-        db_entry = Feature(name=name + "_train",
-                           label=labels[name], **features)
-        db_entry.save()
+    data_source = []
+    with db.atomic():
+        for name, features in train_features:
+            features["name"] = name + "_train"
+            features["label"] = labels[name]
+            data_source.append(features)
+            if len(data_source) == 1000:
+                Feature.insert_many(data_source).execute()
+                data_source = []
+        if len(data_source):
+            Feature.insert_many(data_source).execute()
 
     logger.debug("Extracting test features")
     test_features = extract_from_dir(test_dir)
     logger.debug("Saving test features in db")
-    for name, features in test_features:
-        db_entry = Feature(name=name, **features)
-        db_entry.save()
+    data_source = []
+    with db.atomic():
+        for name, features in test_features:
+            features["name"] = name
+            data_source.append(features)
+            if len(data_source) == 1000:
+                Feature.insert_many(data_source).execute()
+                data_source = []
+        if len(data_source):
+            Feature.insert_many(data_soruce).execute()
 
-"""--------------------------------------------------------------------------"""
-""" Commandline setup"""
-"""--------------------------------------------------------------------------"""
+'''--------------------------------------------------------------------------'''
+''' Commandline setup'''
+'''--------------------------------------------------------------------------'''
 def setup_arguments(parser):
     """Setup arguments"""
     help_str = "Path to training directory containing .jpeg files"
@@ -140,7 +153,7 @@ def main():
     logger.addHandler(ch)
     mysql_db.connect()
     try:
-        features_to_db(args.training_dir, args.test_dir, args.label_file)
+        features_to_db(mysql_db, args.training_dir, args.test_dir, args.label_file)
     except:
         mysql_db.close()
         raise
