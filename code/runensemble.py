@@ -10,6 +10,7 @@ import logging
 import argparse
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.preprocessing import StandardScaler
 
 N_FOLD = 3
 
@@ -93,6 +94,10 @@ def process_normal(output_file):
         mysql_db.close()
         raise
     mysql_db.close()
+    logging.debug("scaling")
+    scaler = StandardScaler(copy=False)
+    scaler.fit_transform(train_features)
+    scaler.transform(test_features)
     logger.debug("running classifier")
     predictions = Classify.runClassifiers(train_features, train_labels,
                                           test_features)
@@ -118,6 +123,10 @@ def process_xval():
     for train_idx, test_idx in skf:
         X_train, X_test = features[train_idx], features[test_idx]
         y_train, y_test = labels[train_idx], labels[test_idx]
+        logger.debug("scaling")
+        scaler = StandardScaler(copy=False)
+        scaler.fit_transform(X_train)
+        scaler.transform(X_test)
         logger.debug("Running classifier")
         predictions = Classify.runClassifiers(X_train, y_train, X_test)
         if conf_mtx == None:
