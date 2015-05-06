@@ -23,6 +23,7 @@ def get_features(query, extra):
     rows = []
     extras = []
     for feature in query.naive().iterator():
+
         row = np.hstack([feature.gray_hist,
                          feature.red_hist,
                          feature.green_hist,
@@ -31,6 +32,7 @@ def get_features(query, extra):
                          feature.saturation_hist,
                          feature.value_hist,
                          feature.pca])
+
         rows.append(row)
         extras.append(extra(feature))
 
@@ -75,7 +77,7 @@ def setup_options(parser):
                         help=help_str)
 
     help_str = "Results file when predicting test labels [default:%(default)s]"
-    parser.add_argument("-o", "--outfile", action="store_true",
+    parser.add_argument("-o", "--outfile",
                         default="results.csv", help=help_str)
 
 def validate_arguments(args):
