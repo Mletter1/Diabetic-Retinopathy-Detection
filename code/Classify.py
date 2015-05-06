@@ -24,7 +24,7 @@ def majorityVotePredictions(classifiers, testing):
     for c in range(0, len( classifiers ) ):
         predictions[:, c] = classifiers[c].predict( testing )
     
-    most_common_predictions = numpy.apply_along_axis( most_common, axis=0, arr = predictions )
+    most_common_predictions = numpy.apply_along_axis( most_common, axis=1, arr = predictions )
     
     return most_common_predictions
     
