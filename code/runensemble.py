@@ -67,7 +67,7 @@ def write_predictions(output_file, test_names, predictions):
         writer = csv.writer(csvfile, delimiter=',', quotechar='|',
                             quoting=csv.QUOTE_MINIMAL)
         for name, label in izip(test_names, predictions):
-            writer.writerow([name, label])
+            writer.writerow([name, int(label)])
 
 '''-------------------------------------------------------------------------'''
 def setup_arguments(parser):
