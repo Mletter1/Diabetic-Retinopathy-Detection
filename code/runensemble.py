@@ -23,40 +23,48 @@ def get_features(query, extra):
     rows = []
     extras = []
     for feature in query.naive().iterator():
-
+        row = feature.red_hist
+        """
         row = np.hstack([feature.gray_hist,
                          feature.red_hist,
                          feature.green_hist,
                          feature.blue_hist,
                          feature.hue_hist,
                          feature.saturation_hist,
-                         feature.value_hist,
+                         feature.value_hist])
                          feature.pca])
-
+        """
         rows.append(row)
         extras.append(extra(feature))
 
-    return np.vstack(rows), np.array(extras)
+    return np.vstack(rows).astype(np.float64), np.array(extras)
 
 def get_training():
     """Get training related features and labels"""
-    query = Feature.select().where(Feature.label.is_null(False))
+    query = Feature.select(Feature.red_hist, Feature.label).where(Feature.label.is_null(False))
+    #query = Feature.select().where(Feature.label.is_null(False))
     get_label = lambda x: x.label
     return get_features(query, get_label)
 
 def get_test():
     """Get test related features and names"""
     query = (Feature
+             .select(Feature.name, Feature.red_hist)
+             .where(Feature.label.is_null(True))
+             .order_by(Feature.name))
+    """
+    query = (Feature
              .select()
              .where(Feature.label.is_null(True))
              .order_by(Feature.name))
+    """
     get_name = lambda x: x.name
     return get_features(query, get_name)
 
 def write_predictions(output_file, test_names, predictions):
     """Write predictions to output_file"""
     with open(output_file, 'wb') as csvfile:
-        writer = csv.writer(csvfile, delimeter=',', quotechar='|',
+        writer = csv.writer(csvfile, delimiter=',', quotechar='|',
                             quoting=csv.QUOTE_MINIMAL)
         for name, label in izip(test_names, predictions):
             writer.writerow([name, label])
