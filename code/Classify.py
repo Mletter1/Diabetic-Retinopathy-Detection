@@ -53,11 +53,22 @@ def buildClassifiers(training, train_labels):
     
     # decision tree, SVM, log. regression, fnn (feed-forward neural net), 
     # each as separate function returning the classifier 
-    return [ decTree(training, train_labels),
-             logisticRegressor(training, train_labels),
-             KNeighborsClassifier(5, training, train_labels),
-             MultinomialNB(training, train_labels)
-           ]
+    knn = makeKNN(training, train_labels)
+    print "Classify: finished building KNN"
+    nb = makeMultinomialNB(training, train_labels)
+    print "Classify: finished building naive bayes"
+    svmc = makeSVM(training, train_labels)
+    print "Classify: finished building svm"
+    dt = decTree(training, train_labels)
+    print "Classify: finished building decision tree"
+    lr = logReg(training, train_labels)
+    print "Classify: finished building logistic regression"
+    
+    ensemble =  [ knn, nb, svmc, dt, lr ]
+    
+    print "Classify: finished building classifier ensemble"
+    
+    return ensemble
     
 
 def trainClassifier(clf, training, train_labels):
@@ -70,17 +81,22 @@ def decTree(training, train_labels):
     return trainClassifier(clf, training, train_labels)
 
 
-def logisticRegressor(training, train_labels):
+def logReg(training, train_labels):
     clf = linear_model.LogisticRegression()
     return trainClassifier(clf, training, train_labels)
 
 
-def KNearestNeighbors(k, training, train_labels):
-    knn = KNeighborsClassifier(n_neighbors=k)
+def makeKNN(training, train_labels):
+    knn = KNeighborsClassifier()  # defaults to k = 5
     return trainClassifier(knn, training, train_labels)
-    
 
-def multinomialNB(training, train_labels):
+
+def makeSVM(training, train_labels):
+    clf = svm.SVC()
+    return trainClassifier(clf, training, train_labels)
+
+
+def makeMultinomialNB(training, train_labels):
     clf = MultinomialNB()
     return trainClassifier(clf, training, train_labels)
 

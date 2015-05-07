@@ -23,7 +23,7 @@ def get_features(query, extra):
     rows = []
     extras = []
     for feature in query.naive().iterator():
-        row = np.hstack([feature.red_hist, feature.gray_hist, feature.value_hist])
+        row = np.hstack([feature.gray_hist, feature.pca])
         """
         row = np.hstack([feature.gray_hist,
                          feature.red_hist,
@@ -41,7 +41,7 @@ def get_features(query, extra):
 
 def get_training():
     """Get training related features and labels"""
-    query = Feature.select(Feature.red_hist, Feature.gray_hist, Feature.value_hist,\
+    query = Feature.select(Feature.gray_hist, Feature.pca,\
                            Feature.label).where(Feature.label.is_null(False))
     #query = Feature.select().where(Feature.label.is_null(False))
     get_label = lambda x: x.label
@@ -50,7 +50,7 @@ def get_training():
 def get_test():
     """Get test related features and names"""
     query = (Feature
-             .select(Feature.name, Feature.red_hist, Feature.gray_hist, Feature.value_hist)
+             .select(Feature.name, Feature.gray_hist, Feature.pca)
              .where(Feature.label.is_null(True))
              .order_by(Feature.name))
     """
