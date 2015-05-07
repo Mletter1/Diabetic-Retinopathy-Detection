@@ -5,6 +5,8 @@ from scipy.stats import mode
 from sklearn import tree
 from sklearn import svm
 from sklearn import linear_model
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import MultinomialNB
 
 def most_common(npArr):
     '''
@@ -52,8 +54,9 @@ def buildClassifiers(training, train_labels):
     # decision tree, SVM, log. regression, fnn (feed-forward neural net), 
     # each as separate function returning the classifier 
     return [ decTree(training, train_labels),
-             supportVectorMachine(training, train_labels),
-             logisticRegressor(training, train_labels)
+             logisticRegressor(training, train_labels),
+             KNeighborsClassifier(5, training, train_labels),
+             MultinomialNB(training, train_labels)
            ]
     
 
@@ -67,15 +70,18 @@ def decTree(training, train_labels):
     return trainClassifier(clf, training, train_labels)
 
 
-def supportVectorMachine(training, train_labels):
-    clf = svm.SVC()
-    return trainClassifier(clf, training, train_labels)
-
-
 def logisticRegressor(training, train_labels):
     clf = linear_model.LogisticRegression()
     return trainClassifier(clf, training, train_labels)
 
 
+def KNearestNeighbors(k, training, train_labels):
+    knn = KNeighborsClassifier(n_neighbors=k)
+    return trainClassifier(knn, training, train_labels)
+    
+
+def multinomialNB(training, train_labels):
+    clf = MultinomialNB()
+    return trainClassifier(clf, training, train_labels)
 
 
