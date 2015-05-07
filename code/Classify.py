@@ -55,8 +55,8 @@ def buildClassifiers(training, train_labels):
     # each as separate function returning the classifier 
     knn = makeKNN(training, train_labels)
     print "Classify: finished building KNN"
-    nb = makeMultinomialNB(training, train_labels)
-    print "Classify: finished building naive bayes"
+    #nb = makeMultinomialNB(training, train_labels)
+    #print "Classify: finished building naive bayes"
     svmc = makeSVM(training, train_labels)
     print "Classify: finished building svm"
     dt = decTree(training, train_labels)
@@ -64,7 +64,7 @@ def buildClassifiers(training, train_labels):
     lr = logReg(training, train_labels)
     print "Classify: finished building logistic regression"
     
-    ensemble =  [ knn, nb, svmc, dt, lr ]
+    ensemble =  [ knn, svmc, dt, lr ]
     
     print "Classify: finished building classifier ensemble"
     
